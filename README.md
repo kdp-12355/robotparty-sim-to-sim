@@ -160,3 +160,80 @@ export XDG_RUNTIME_DIR=/tmp/runtime-rootmkdir -p /tmp/runtime-rootexport DISPLAY
 
 <img width="2432" height="1222" alt="image" src="https://github.com/user-attachments/assets/3836f334-8f6f-4ef0-9dd9-f4748e7ffef6" />
 
+
+
+
+
+# RPO-Rough（崎岖地形盲走）启动命令总结
+
+## 前置条件（已完成）
+
+- ✅ 脚本 `sim2sim_rpo.py` 已修复（第 76、313、315 行缩进/路径正确）
+- ✅ `vx = 0.2` 已设（让它往前走）
+- ✅ Rough policy 已导出：`rpo_rough/2026-09-17_06-51-42/exported/policy.pt`
+- ✅ 地形 xml 存在：`rpo_description/mjcf/rpo_terrain.xml`
+
+## 启动命令（逐行执行，不要一次粘贴多行）
+
+```bash
+export XDG_RUNTIME_DIR=/tmp/runtime-root
+```
+
+```bash
+mkdir -p /tmp/runtime-root
+```
+
+```bash
+export DISPLAY=:1
+```
+
+```bash
+cd /workspace/robotor/roboparty_train-main
+```
+
+```bash
+/workspace/miniconda3/envs/mujoco_env/bin/python robolab/scripts/mujoco/sim2sim_rpo.py --terrain --load_model /workspace/IsaacLab/logs/rsl_rl/rpo_rough/2026-09-17_06-51-42/exported/policy.pt
+```
+
+## 与 RPO-Flat 的区别（3 处）
+
+| 项目 | RPO-Flat | **RPO-Rough** |
+|------|----------|---------------|
+| `--terrain` 参数 | ❌ 不加 | ✅ **必须加** |
+| 地形 xml | `rpo.xml`（平地） | `rpo_terrain.xml`（崎岖地形） |
+| policy 路径 | `rpo_flat/.../policy_1.pt` | **`rpo_rough/.../exported/policy.pt`** |
+| 脚本 | `sim2sim_rpo.py` | `sim2sim_rpo.py`（同一个） |
+
+## 关键参数位置
+
+| 参数 | 位置 | 说明 |
+|------|------|------|
+| `vx / vy / dyaw` | `class cmd` | `vx=0.2` 前进；0 时站立 |
+| `--terrain` | 命令行 | 切换崎岖地形 |
+| `mujoco_model_path` | `class sim_config` 内 if/else | `if args.terrain` → terrain xml |
+| `sim_duration` | `class sim_config` | 仿真总时长（秒） |
+| `action_scale` | `class robot_config` | 0.25，要和训练一致 |
+| `kps / kds` | `class robot_config` | PD 增益 |
+
+## 常见坑
+
+| 现象 | 原因 | 处理 |
+|------|------|------|
+| `IndentationError` | `sed` 误改脚本缩进 | 用 Python 脚本精确修复 313/315 行 |
+| `NameError: model` | 第 76 行被覆盖 | 恢复 `model = mujoco.MjModel.from_xml_path(...)` |
+| `bash: export: '-p' not a valid identifier` | 多行命令被拼成一行 | **逐行粘贴，不要一次复制多行** |
+| 机器人不动 | `vx=0` | 改 `vx=0.2` |
+| 加载了平地 | 忘了 `--terrain` | 加上 `--terrain` |
+
+## 一键版（确认换行正常时可用）
+
+```bash
+export XDG_RUNTIME_DIR=/tmp/runtime-root; mkdir -p /tmp/runtime-root; export DISPLAY=:1; cd /workspace/robotor/roboparty_train-main; /workspace/miniconda3/envs/mujoco_env/bin/python robolab/scripts/mujoco/sim2sim_rpo.py --terrain --load_model /workspace/IsaacLab/logs/rsl_rl/rpo_rough/2026-09-17_06-51-42/exported/policy.pt
+```
+
+用 `;` 分隔，避免换行丢失的问题。
+
+
+
+<img width="2210" height="1092" alt="image" src="https://github.com/user-attachments/assets/e2d15020-f957-423c-950b-dfeb6ff1ff17" />
+
