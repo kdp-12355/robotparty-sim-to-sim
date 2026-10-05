@@ -237,3 +237,32 @@ export XDG_RUNTIME_DIR=/tmp/runtime-root; mkdir -p /tmp/runtime-root; export DIS
 
 <img width="2210" height="1092" alt="image" src="https://github.com/user-attachments/assets/e2d15020-f957-423c-950b-dfeb6ff1ff17" />
 
+
+
+
+
+
+
+
+
+
+
+
+
+export XDG_RUNTIME_DIR=/tmp/runtime-root
+mkdir -p /tmp/runtime-root
+export DISPLAY=:1
+export MUJOCO_GL=glfw
+
+cd /workspace/robotor/roboparty_train-main
+/workspace/miniconda3/envs/mujoco_env/bin/python robolab/scripts/mujoco/sim2sim_rpo_interrupt.py \
+  --load_model /workspace/IsaacLab/logs/rsl_rl/rpo_interrupt/2026-09-19_01-07-13/exported/policy.pt
+
+
+
+
+
+
+
+<img width="1928" height="1282" alt="image" src="https://github.com/user-attachments/assets/c6113e52-fde2-4add-b42e-91b8049afb3e" />
+
