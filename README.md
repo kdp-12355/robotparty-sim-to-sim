@@ -266,3 +266,35 @@ cd /workspace/robotor/roboparty_train-main
 
 <img width="1928" height="1282" alt="image" src="https://github.com/user-attachments/assets/c6113e52-fde2-4add-b42e-91b8049afb3e" />
 
+
+
+
+cmd 类是类变量，直接改 vx = 0.3 就能让它走（不用键盘）。
+
+改成 vx = 0.3
+bash
+sed -i 's/^    vx = .*/    vx = 0.3/' \
+  /workspace/robotor/roboparty_train-main/robolab/scripts/mujoco/sim2sim_rpo_amp.py
+
+sed -n '/^class cmd/,/^$/p' /workspace/robotor/roboparty_train-main/robolab/scripts/mujoco/sim2sim_rpo_amp.py
+预期：
+
+text
+class cmd:
+    vx = 0.3
+    vy = 0.0
+    dyaw = 0.0
+    ...
+重跑（VNC 桌面）
+bash
+export XDG_RUNTIME_DIR=/tmp/runtime-root
+mkdir -p /tmp/runtime-root
+export DISPLAY=:1
+export MUJOCO_GL=glfw
+
+cd /workspace/robotor/roboparty_train-main
+/workspace/miniconda3/envs/mujoco_env/bin/python robolab/scripts/mujoco/sim2sim_rpo_amp.py \
+  --load_model /workspace/IsaacLab/logs/rsl_rl/rpo_amp/2026-09-19_12-31-09/exported/policy.pt
+
+<img width="2472" height="1336" alt="image" src="https://github.com/user-attachments/assets/60ec402f-2bf2-4fac-b19c-cebc251996b8" />
+
