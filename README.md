@@ -476,5 +476,6 @@ cd /workspace/robotor/roboparty_train-main
 你已经完成了楼梯 XML 的初步检查，并找到仿真时长参数 `sim_duration = 30.0`，准备调整为 120 秒和降低前进速度。
 
 接下来最重要的是：先确认机器人能在楼梯场景中稳定站立并慢速接近台阶，再判断现有 RPO-Rough 策略是否真正具备爬楼梯能力。 如果它只能走平地或一般粗糙地形，下一步可能需要增加台阶地形训练、调整地形课程，或者专门训练楼梯通过策略。
-![Uploading image.png…]()
+<img width="2162" height="1198" alt="image" src="https://github.com/user-attachments/assets/7f91c932-ab70-41e6-b329-f691d20d0790" />
+
 
